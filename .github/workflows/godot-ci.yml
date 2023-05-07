@@ -1,5 +1,8 @@
 name: "godot-ci export"
-on: push
+on:
+  push:
+    branches:
+      - main
 
 env:
   GODOT_VERSION: 3.5.1
@@ -28,17 +31,13 @@ jobs:
           mkdir -v -p build/linux
           cd $PROJECT_PATH
           godot -v --export "Linux/X11" ../build/linux/$EXPORT_NAME.x86_64
-      - name: Install Docker
-        run: |
-           apt-get update
-           apt-get install -y docker.io
-      - name: Build Docker Image
-        run: |
-          docker build -t $DOCKER_USERNAME/$EXPORT_NAME:$GODOT_VERSION -f Dockerfile .
-      - name: Push Docker Image
-        uses: docker/login-action@v1
+      - name: Docker Build and Push
+        uses: docker/build-push-action@v2
         with:
-          username: ${{ env.DOCKER_USERNAME }}
-          password: ${{ env.DOCKER_PASSWORD }}
-      - run: |
-          docker push $DOCKER_USERNAME/$EXPORT_NAME:$GODOT_VERSION
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: $DOCKER_USERNAME/$EXPORT_NAME:$GODOT_VERSION
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
