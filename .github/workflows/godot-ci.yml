@@ -28,6 +28,10 @@ jobs:
           mkdir -v -p build/linux
           cd $PROJECT_PATH
           godot -v --export "Linux/X11" ../build/linux/$EXPORT_NAME.x86_64
+      - name: Install Docker
+        run: |
+           sudo apt-get update
+           sudo apt-get install -y docker.io
       - name: Build Docker Image
         run: |
           docker build -t $DOCKER_USERNAME/$EXPORT_NAME:$GODOT_VERSION -f Dockerfile .
