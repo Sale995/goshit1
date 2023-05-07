@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install Godot Engine
-      uses: pascalineo/godot-engine-action@v1
+      uses: nanalan/godot-installation-action@v1
       with:
         version: ${{ env.GODOT_VERSION }}
         export: 'templates/linux_x11.64'
