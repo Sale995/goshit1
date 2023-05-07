@@ -15,8 +15,8 @@ jobs:
     - name: Install Godot
       uses: docker://barichello/godot-ci:3.5.1
       with:
-          export_templates: Linux/X11
-          export_dir: export
+        export_templates: Linux/X11
+        export_dir: export
     
     - name: Build Docker image
       run: |
