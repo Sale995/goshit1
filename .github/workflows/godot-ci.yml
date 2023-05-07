@@ -1,4 +1,4 @@
-name: Export Godot game for Linux and publish Docker image
+name: Export Godot game for Linux and publish Docker imagea
 
 on:
   push:
