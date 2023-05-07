@@ -1,35 +1,45 @@
-name: "godot-ci export"
-on: push
+name: Export Godot game for Linux and publish Docker imagea
+
+on:
+  push:
+    branches:
+      - dev
 
 env:
-  GODOT_VERSION: 3.5.1
-  EXPORT_NAME: test-project
-  PROJECT_PATH: test-project
-  
-jobs:
-  export-linux:
-    name: Linux Export
-    runs-on: ubuntu-20.04
-    container:
-      image: barichello/godot-ci:3.5.1
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          lfs: true
-      - name: Setup
-        run: |
-          mkdir -v -p ~/.local/share/godot/templates
-          mv /root/.local/share/godot/templates/${GODOT_VERSION}.stable ~/.local/share/godot/templates/${GODOT_VERSION}.stable
-      - name: Linux Build
-        run: |
-          mkdir -v -p build/linux
-          cd $PROJECT_PATH
-          godot -v --export "Linux/X11" ../build/linux/$EXPORT_NAME.x86_64
-#      - name: Upload Artifact
-#       uses: actions/upload-artifact@v1
-#        with:
-#          name: linux
-#          path: build/linux
+  GODOT_VERSION: '3.5.2'
+  GODOT_EXPORT_TEMPLATE: 'linux_x11.64'
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_REGISTRY: 'docker.io'
 
- 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Godot Engine
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget unzip
+        wget https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_linux_server.64.zip
+        unzip Godot_v${{ env.GODOT_VERSION }}-stable_linux_server.64.zip
+
+    - name: Export Godot game for Linux
+      run: |
+        mkdir -p export/linux
+        ./Godot_v${{ env.GODOT_VERSION }}-stable_linux_server.64 --path ./project --export "${{ env.GODOT_EXPORT_TEMPLATE }}" "../export/linux/game.x86_64"
+
+    - name: Build and publish Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: ${{ env.DOCKER_REGISTRY }}/${{ env.GITHUB_REPOSITORY }}:5
+        secrets: |
+          DOCKER_USERNAME=${{ env.DOCKER_USERNAME }}
+          DOCKER_PASSWORD=${{ env.DOCKER_PASSWORD }}
+      env:
+        GAME_FILE: './export/linux/game.x86_64'
