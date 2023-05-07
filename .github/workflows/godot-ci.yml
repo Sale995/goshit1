@@ -10,7 +10,7 @@ env:
   GODOT_EXPORT_TEMPLATE: 'linux_x11.64'
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  DOCKER_REGISTRY: 'docker.io'
+  DOCKER_REGISTRY: 'sale955'
 
 jobs:
   build:
@@ -37,7 +37,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ env.DOCKER_REGISTRY }}/${{ env.GITHUB_REPOSITORY }}:5
+        tags: ${{ env.DOCKER_REGISTRY }}/godhit:5
         secrets: |
           DOCKER_USERNAME=${{ env.DOCKER_USERNAME }}
           DOCKER_PASSWORD=${{ env.DOCKER_PASSWORD }}
