@@ -1,16 +1,8 @@
-name: Export Godot game for Linux and publish Docker imagea
+name: Godot CI
 
 on:
   push:
-    branches:
-      - dev
-
-env:
-  GODOT_VERSION: '3.5.2'
-  GODOT_EXPORT_TEMPLATE: 'linux_x11.64'
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  DOCKER_REGISTRY: 'sale955'
+    branches: [dev]
 
 jobs:
   build:
@@ -19,27 +11,24 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Install Godot Engine
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y wget unzip
-        wget https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_linux_server.64.zip
-        unzip Godot_v${{ env.GODOT_VERSION }}-stable_linux_server.64.zip
-
-    - name: Export Godot game for Linux
-      run: |
-        sudo mkdir -p /export/linux
-        ./Godot_v${{ env.GODOT_VERSION }}-stable_linux_server.64 --path ./project --export "${{ env.GODOT_EXPORT_TEMPLATE }}" "../export/linux/game.x86_64"
-
-    - name: Build and publish Docker image
-      uses: docker/build-push-action@v2
+      
+    - name: Install Godot
+      uses: abarichello/godot-ci@v1.3.0
       with:
-        context: .
-        push: true
-        tags: ${{ env.DOCKER_REGISTRY }}/godhit:5
-        secrets: |
-          DOCKER_USERNAME=${{ env.DOCKER_USERNAME }}
-          DOCKER_PASSWORD=${{ env.DOCKER_PASSWORD }}
-      env:
-        GAME_FILE: './export/linux/game.x86_64'
+        version: 3.5.1
+        export_templates: Linux/X11
+    
+    - name: Build Docker image
+      run: |
+        docker build -t sale955/godhito:test .
+      working-directory: ${{ github.workspace }}/export/Linux/X11
+
+    - name: Push Docker image to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    - name: Push Docker image to Docker Hub
+      run: |
+        docker push sale955/godhito:test
