@@ -35,6 +35,9 @@ jobs:
         run: |
           apt-get update
           apt-get -y install docker.io
+      - name: Setup Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
       - name: Docker Build and Push
         uses: docker/build-push-action@v4
         with:
