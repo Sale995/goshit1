@@ -15,12 +15,12 @@ jobs:
     - name: Install Godot
       uses: docker://barichello/godot-ci:3.5.1
       with:
-        export_templates: /export/Linux/X11
+        export_templates: /project
     
     - name: Build Docker image
       run: |
         docker build -t sale955/godhit:test .
-      working-directory: ${{ github.workspace }}/export/Linux/X11
+      working-directory: ${{ github.workspace }}/project
 
     - name: Push Docker image to Docker Hub
       uses: docker/login-action@v1
