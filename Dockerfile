@@ -29,5 +29,6 @@ RUN wget https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}/Godot_v${G
     rm -rf Godot_v${GODOT_VERSION}-stable_linux_headless.64.zip
 
 WORKDIR /app
+RUN mkdir build/linux
 COPY ./build/linux/$EXPORT_NAME.x86_64 .
 ENTRYPOINT ["./test-project.x86_64"]
