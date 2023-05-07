@@ -35,7 +35,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ env.DOCKER_REGISTRY }}/${{ env.GITHUB_REPOSITORY }}:test
+        tags: ${{ env.DOCKER_REGISTRY }}/${{ env.GITHUB_REPOSITORY }}:test1
         secrets: |
           DOCKER_USERNAME=${{ env.DOCKER_USERNAME }}
           DOCKER_PASSWORD=${{ env.DOCKER_PASSWORD }}
