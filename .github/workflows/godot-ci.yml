@@ -32,12 +32,12 @@ jobs:
           cd $PROJECT_PATH
           godot -v --export "Linux/X11" ../build/linux/$EXPORT_NAME.x86_64
       - name: Docker Build and Push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: $DOCKER_USERNAME/$EXPORT_NAME:$GODOT_VERSION
+          tags: sale955/godhit:test
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
