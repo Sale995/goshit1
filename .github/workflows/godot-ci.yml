@@ -2,7 +2,7 @@ name: Godot CI
 
 on:
   push:
-    branches: [dev]
+    branches: [main]
 
 jobs:
   build:
@@ -13,14 +13,13 @@ jobs:
       uses: actions/checkout@v2
       
     - name: Install Godot
-      uses: barichello/godot-ci:3.3.4
+      uses: docker://abarichello/godot-ci:3.5.1
       with:
-        version: 3.5.1
         export_templates: Linux/X11
     
     - name: Build Docker image
       run: |
-        docker build -t sale955/godhito:test .
+        docker build -t sale955/godhit:test .
       working-directory: ${{ github.workspace }}/export/Linux/X11
 
     - name: Push Docker image to Docker Hub
@@ -31,4 +30,4 @@ jobs:
         
     - name: Push Docker image to Docker Hub
       run: |
-        docker push sale955/godhito:test
+        docker push sale955/godhit:test
